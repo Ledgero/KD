@@ -72,18 +72,18 @@ def cvt_annotations(devkit_path, years, split, out_file):
     annotations = []
     for year in years:
         filelist = osp.join(devkit_path,
-                            f'VOC{year}/ImageSets/Main/{split}.txt')
+                            f'{year}/ImageSets/Main/{split}.txt')
         if not osp.isfile(filelist):
             print(f'filelist does not exist: {filelist}, '
                   f'skip voc{year} {split}')
             return
         img_names = list_from_file(filelist)
         xml_paths = [
-            osp.join(devkit_path, f'VOC{year}/Annotations/{img_name}.xml')
+            osp.join(devkit_path, f'{year}/Annotations/{img_name}.xml')
             for img_name in img_names
         ]
         img_paths = [
-            f'VOC{year}/JPEGImages/{img_name}.jpg' for img_name in img_names
+            f'{year}/JPEGImages/{img_name}.jpg' for img_name in img_names
         ]
         part_annotations = track_progress(parse_xml,
                                           list(zip(xml_paths, img_paths)))
@@ -188,7 +188,7 @@ def parse_args():
     parser.add_argument('-o', '--out-dir', help='output path')
     parser.add_argument(
         '--out-format',
-        default='pkl',
+        default='coco',
         choices=('pkl', 'coco'),
         help='output format, "coco" indicates coco annotation format')
     args = parser.parse_args()
@@ -202,24 +202,25 @@ def main():
     mkdir_or_exist(out_dir)
 
     years = []
-    if osp.isdir(osp.join(devkit_path, 'VOC2007')):
-        years.append('2007')
-    if osp.isdir(osp.join(devkit_path, 'VOC2012')):
-        years.append('2012')
-    if '2007' in years and '2012' in years:
-        years.append(['2007', '2012'])
+    # 获取当前脚本所在目录
+    for year in ['VOC2007', 'VOC2012']:
+        if osp.exists(osp.join(devkit_path, year)):
+            years.append(year)
+    print(years)
     if not years:
         raise IOError(f'The devkit path {devkit_path} contains neither '
                       '"VOC2007" nor "VOC2012" subfolder')
+
     out_fmt = f'.{args.out_format}'
     if args.out_format == 'coco':
         out_fmt = '.json'
     for year in years:
-        if year == '2007':
+        print(year)
+        if year == 'VOC2007':
             prefix = 'voc07'
-        elif year == '2012':
+        elif year == 'VOC2012':
             prefix = 'voc12'
-        elif year == ['2007', '2012']:
+        elif year == ['VOC2007', 'VOC2012']:
             prefix = 'voc0712'
         for split in ['train', 'val', 'trainval']:
             dataset_name = prefix + '_' + split

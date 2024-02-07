@@ -12,7 +12,9 @@ from mmengine.runner import Runner
 from mmdet.engine.hooks.utils import trigger_visualization_hook
 from mmdet.evaluation import DumpDetResults
 from mmdet.registry import RUNNERS
-
+"""
+python tools/test.py    configs/balloon/mask-rcnn_r50-caffe_fpn_ms-poly-1x_balloon.py    work_dirs/mask-rcnn_r50/epoch_12.pth
+"""
 
 # TODO: support fuse_conv_bn and format_only
 def parse_args():

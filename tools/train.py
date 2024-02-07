@@ -8,35 +8,36 @@ from mmengine.config import Config, DictAction
 from mmengine.logging import print_log
 from mmengine.registry import RUNNERS
 from mmengine.runner import Runner
-
+"""
+for example：python tools/train.py configs/balloon/mask-rcnn_r50-caffe_fpn_ms-poly-1x_balloon.py
+"""
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Train a detector')
-    parser.add_argument('config', help='train config file path')
-    parser.add_argument('--work-dir', help='the dir to save logs and models')
+    parser.add_argument('config', help='训练配置文件路径')
+    parser.add_argument('--work-dir', help='保存日志和模型的目录')
     parser.add_argument(
         '--amp',
         action='store_true',
         default=False,
-        help='enable automatic-mixed-precision training')
+        help='启用自动混合精度训练')
     parser.add_argument(
         '--auto-scale-lr',
         action='store_true',
-        help='enable automatically scaling LR.')
+        help='启用自动缩放学习率')
     parser.add_argument(
         '--resume',
         nargs='?',
         type=str,
         const='auto',
-        help='If specify checkpoint path, resume from it, while if not '
-        'specify, try to auto resume from the latest checkpoint '
-        'in the work directory.')
+        help='如果指定了检查点路径，则从中恢复，如果未指定，则'
+        '尝试从工作目录中的最新检查点自动恢复')
     parser.add_argument(
         '--cfg-options',
         nargs='+',
         action=DictAction,
-        help='override some settings in the used config, the key-value pair '
-        'in xxx=yyy format will be merged into config file. If the value to '
+        help='覆盖配置文件中的一些设置，xxx=yyy 格式的键值对将合并到配置文件中'
+        'If the value to '
         'be overwritten is a list, it should be like key="[a,b]" or key=a,b '
         'It also allows nested list/tuple values, e.g. key="[(a,b),(c,d)]" '
         'Note that the quotation marks are necessary and that no white space '
@@ -48,6 +49,8 @@ def parse_args():
         help='job launcher')
     parser.add_argument('--local_rank', type=int, default=0)
     args = parser.parse_args()
+
+    # 如果环境变量中没有定义 'LOCAL_RANK'，则将其设置为命令行参数中的值
     if 'LOCAL_RANK' not in os.environ:
         os.environ['LOCAL_RANK'] = str(args.local_rank)
 
